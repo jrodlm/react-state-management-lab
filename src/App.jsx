@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
+import './App.css' ;
 
 const App = () => {
 
-  const [team, setTeam] = useState ({
-      
-  })
+  const [team, setTeam] = useState([])
   
-  const [money, setMoney] = useState (
-    {money: '100',
-    })
+  const [money, setMoney] = useState(100)
 
-  const zombieFighters = [
+  const [zombieFighters, setZombieFighters] = useState([
       {
         id: 1,
         name: 'Survivor',
@@ -91,24 +88,49 @@ const App = () => {
         agility: 6,
         img: 'https://pages.git.generalassemb.ly/modular-curriculum-all-courses/react-state-management-lab/assets/e41f26.png',
       },
-  ]
+  ])
+
+  const handleAddFighter = (event, fighter) => {
+    setTeam([...team, fighter])
+    
+    const filteredZombieFighters = zombieFighters.filter(zombieFighter => fighter.id !== zombieFighter.id);
+    setZombieFighters(filteredZombieFighters)
+
+    if(money < fighter.price) {
+      console.log("Not enough money")
+     } else { 
+    setMoney(money - fighter.price)
+     }
+   }
+
+
+// const totalStrength = team.map(fighter,index) {
+//   fighter.strength 
+
+//   for (let fighter.strength in zombieFighters) {
+//     if (zombieFighters.strength() && strength === "") {
+//         total += zombieFighters[strength];
+//     }
+
+
+
   
   return (
     <>
-    <h1>Zombie Fighters</h1>
-    <ul>
-      <li>{zombieFighters.map((fighter, index) => (
-        <ZombieFighter
-        id={index}
-        img={fighter.img}
-        name={fighter.name}
-        price={fighter.price}
-        strength={fighter.strength}
-        agility={fighter.agility}
-        />
+      <h1>Zombie Fighters</h1>
+      <h3>Money: {money} </h3>
+    <div className="container">
+      {zombieFighters.map((fighter, index) => (
+       <div key={fighter.id} className="card">
+        <img src={fighter.img}/>
+        <p><b>{fighter.name}</b></p>
+        <p>Price: {fighter.price}</p>
+        <p>Strength: {fighter.strength}</p>
+        <p>Agility: {fighter.agility}</p>
+        <button onClick={(event) => handleAddFighter(event, fighter)}>Add</button>
+        </div>
       ))}
-        </li>
-    </ul>
+    </div>
     </>
   );
 }
