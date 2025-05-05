@@ -4,9 +4,8 @@ import './App.css' ;
 const App = () => {
 
   const [team, setTeam] = useState([])
-  
   const [money, setMoney] = useState(100)
-
+  const [errorMessage, setErrorMessage] = useState('');
   const [zombieFighters, setZombieFighters] = useState([
       {
         id: 1,
@@ -88,51 +87,80 @@ const App = () => {
         agility: 6,
         img: 'https://pages.git.generalassemb.ly/modular-curriculum-all-courses/react-state-management-lab/assets/e41f26.png',
       },
-  ])
+  ]);
 
   const handleAddFighter = (event, fighter) => {
+    if(money < fighter.price) {
+      setErrorMessage(`Not enough money to add ${fighter.name}!`);
+      return;
+     }
+
+    setErrorMessage('');
+
+
     setTeam([...team, fighter])
     
     const filteredZombieFighters = zombieFighters.filter(zombieFighter => fighter.id !== zombieFighter.id);
     setZombieFighters(filteredZombieFighters)
 
-    if(money < fighter.price) {
-      console.log("Not enough money")
-     } else { 
     setMoney(money - fighter.price)
-     }
-   }
 
+    }
 
-// const totalStrength = team.map(fighter,index) {
-//   fighter.strength 
+    const handleRemoveFighter = (fighterToRemove) => {
+      const updatedTeam = team.filter(fighter => fighter.id !== fighterToRemove.id);
+      setTeam(updatedTeam);
+      
+      setZombieFighters([...zombieFigthers, fighterToRemove]);
+  
+      setMoney(money + fighterToRemove.price)
+      }
+  
 
-//   for (let fighter.strength in zombieFighters) {
-//     if (zombieFighters.strength() && strength === "") {
-//         total += zombieFighters[strength];
-//     }
-
-
+    const totalStrength = team.reduce((total, fighter) => total + fighter.strength, 0);
+    const totalAgility = team.reduce((total, fighter) => total + fighter.agility, 0);
 
   
-  return (
-    <>
-      <h1>Zombie Fighters</h1>
-      <h3>Money: {money} </h3>
-    <div className="container">
-      {zombieFighters.map((fighter, index) => (
-       <div key={fighter.id} className="card">
-        <img src={fighter.img}/>
-        <p><b>{fighter.name}</b></p>
-        <p>Price: {fighter.price}</p>
-        <p>Strength: {fighter.strength}</p>
-        <p>Agility: {fighter.agility}</p>
-        <button onClick={(event) => handleAddFighter(event, fighter)}>Add</button>
+    return (
+      <>
+        <h1>Available Zombie Fighters</h1>
+        <h3>Money: {money}</h3>
+        <h3>Total Strength: {totalStrength}</h3>
+        <h3>Total Agility: {totalAgility}</h3>
+        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+
+        <div className="container">
+          {zombieFighters.map((fighter, index) => (
+            <div key={fighter.id} className="card">
+              <img src={fighter.img} alt={fighter.name} />
+              <p><b>{fighter.name}</b></p>
+              <p>Price: {fighter.price}</p>
+              <p>Strength: {fighter.strength}</p>
+              <p>Agility: {fighter.agility}</p>
+              <button onClick={(event) => handleAddFighter(event, fighter)}>Add</button>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
-    </>
-  );
-}
+    
+        <h1>My Team</h1>
+        {team.length === 0 ? (
+          <p>Pick some team members!</p>
+        ) : (
+          <div className="container">
+            {team.map((fighter) => (
+              <div key={fighter.id} className="card">
+                <img src={fighter.img} alt={fighter.name} />
+                <p><b>{fighter.name}</b></p>
+                <p>Strength: {fighter.strength}</p>
+                <p>Agility: {fighter.agility}</p>
+                <button onClick={() => handleRemoveFighter(fighter)}>Remove</button> {/* 👈 new button */}
+              </div>
+            ))}
+          </div>
+        )}
+      </>
+    );
+  };
+    
 
 export default App
